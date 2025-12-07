@@ -8,7 +8,7 @@ from .schemas import JobCreate
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
-@router.post("/", response_model=Job)
+@router.post("/", status_code=201, response_model=Job)
 def create_job(job: JobCreate, session: Session = Depends(get_session)):
     db_job = Job.model_validate(job)
     session.add(db_job)
