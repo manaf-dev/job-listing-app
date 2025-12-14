@@ -47,9 +47,3 @@ def get_job_by_id(job_id: int, session: Session = Depends(get_session)):
 
     return job
 
-
-@router.delete("/{job_id}")
-def delete_job_by_id(job_id: int, session: Session = Depends(get_session)):
-    job = get_job_by_id(job_id, session=session)
-    session.delete(job)
-    session.commit()

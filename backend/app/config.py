@@ -1,13 +1,10 @@
 import logging
 
 
-def get_logger(name):
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+def get_logger(name: str):
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler("job_listings.log"), logging.StreamHandler()],
     )
-    file_handler = logging.FileHandler("log.txt")
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-    return logger
+    return logging.getLogger(name)
