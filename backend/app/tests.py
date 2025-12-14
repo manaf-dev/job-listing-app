@@ -34,7 +34,10 @@ def client_fixture(session: Session):
 def test_job_fixture(session: Session):
     """Create a sample job in the testing database."""
     job = Job(
-        title="Test Job", description="This is a test job.", company="Test Company"
+        title="Test Job",
+        description="This is a test job.",
+        company="Test Company",
+        location="Test Location",
     )
     session.add(job)
     session.commit()
@@ -69,3 +72,26 @@ def test_create_job_missing_fields(client: TestClient):
         },
     )
     assert response.status_code == 422  # Unprocessable Entity
+
+
+def test_list_jobs(client: TestClient, test_job: Job):
+    response = client.get("/jobs/")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["title"] == test_job.title
+
+
+def test_list_jobs_with_search(client: TestClient, test_job: Job):
+    response = client.get("/jobs/?search=Test")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["title"] == test_job.title
+
+
+def test_list_jobs_with_search_nonexists(client: TestClient, test_job: Job):
+    response = client.get("/jobs/?search=Nonexistent")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 0
