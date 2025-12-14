@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .config import get_logger
 from .db import init_db
 from .routes import router
+
+logger = get_logger(__name__)
 
 app = FastAPI()
 
@@ -20,7 +23,10 @@ app.include_router(router)
 
 @app.on_event("startup")
 def on_startup():
+    logger.info("Starting the Job Listing API...")
+
     init_db()
+    logger.info("Database initialized")
 
 
 @app.get("/")
