@@ -3,7 +3,7 @@ from sqlmodel import Session
 
 from .db import get_session
 from .models import Job
-from .schemas import JobCreate
+from .schemas import JobCreate, JobResponse
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
@@ -15,3 +15,8 @@ def create_job(job: JobCreate, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(db_job)
     return db_job
+
+
+@router.get("/", response_model=list[JobResponse])
+def list_jobs(session: Session = Depends(get_session)):
+    return session.query(Job).all()
