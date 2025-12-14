@@ -1,4 +1,5 @@
 import React from "react";
+import JobList from "../components/JobList";
 
 function HomePage() {
   return (
@@ -12,6 +13,7 @@ function HomePage() {
             Discover amazing job opportunities from top companies
           </p>
         </div>
+        <JobList />
       </div>
     </div>
   );
