@@ -3,19 +3,25 @@ import { api } from "../api/client";
 import JobCard from "./JobCard";
 import LoadingSpinner from "./LoadingSpinner";
 
-function JobList() {
+function JobList({ query = "" }) {
   const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [query]); // ✅ re-run when query changes
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/jobs");
+
+      const params = {};
+      if (query.trim() !== "") {
+        params.search = query;
+      }
+
+      const response = await api.get("/jobs", { params });
       setJobs(response.data);
       setError(null);
     } catch (err) {
@@ -26,9 +32,7 @@ function JobList() {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   if (error) {
     return (
@@ -41,7 +45,7 @@ function JobList() {
   if (jobs.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 text-xl">No jobs available yet.</p>
+        <p className="text-gray-500 text-xl">No jobs match your search.</p>
       </div>
     );
   }

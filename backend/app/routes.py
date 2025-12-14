@@ -1,5 +1,7 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends
-from sqlmodel import Session
+from sqlmodel import Session, or_, select
 
 from .db import get_session
 from .models import Job
@@ -18,5 +20,14 @@ def create_job(job: JobCreate, session: Session = Depends(get_session)):
 
 
 @router.get("/", response_model=list[JobResponse])
-def list_jobs(session: Session = Depends(get_session)):
-    return session.query(Job).all()
+def list_jobs(search: Optional[str] = None, session: Session = Depends(get_session)):
+    statement = select(Job)
+
+    if search:
+        search_term = f"%{search.lower()}%"
+        statement = statement.where(
+            or_(Job.title.ilike(search_term), Job.company.ilike(search_term))
+        )
+
+    results = session.exec(statement).all()
+    return results
