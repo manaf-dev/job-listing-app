@@ -97,6 +97,14 @@ def test_list_jobs_with_search_nonexists(client: TestClient, test_job: Job):
     assert len(data) == 0
 
 
+def test_list_jobs_with_location_filter(client: TestClient, test_job: Job):
+    response = client.get("/jobs/?location=Test")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["title"] == test_job.title
+
+
 def test_get_job(client: TestClient, test_job: Job):
     response = client.get(f"/jobs/{test_job.id}")
     assert response.status_code == 200
