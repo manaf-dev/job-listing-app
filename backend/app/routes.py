@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, or_, select
 
 from .db import get_session
@@ -31,3 +31,14 @@ def list_jobs(search: Optional[str] = None, session: Session = Depends(get_sessi
 
     results = session.exec(statement).all()
     return results
+
+
+@router.get("/{job_id}", response_model=JobResponse)
+def get_job_by_id(job_id: int, session: Session = Depends(get_session)):
+    statement = select(Job).where(Job.id == job_id)
+    job = session.exec(statement).first()
+
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    return job
