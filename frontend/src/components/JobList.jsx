@@ -3,29 +3,40 @@ import { api } from "../api/client";
 import JobCard from "./JobCard";
 import LoadingSpinner from "./LoadingSpinner";
 
-function JobList({ query = "" }) {
+function JobList({ search = "", location = "", onLocationChange }) {
   const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchJobs();
-  }, [query]); // ✅ re-run when query changes
+  }, [search, location]);
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
 
       const params = {};
-      if (query.trim() !== "") {
-        params.search = query;
-      }
+      if (search) params.search = search;
+      if (location) params.location = location;
 
       const response = await api.get("/jobs", { params });
       setJobs(response.data);
+
+      if (response.status === 404) {
+        setError("No jobs found.");
+      } else if (response.status === 400) {
+        setError("Invalid search query.");
+      }
+
+      const uniqueLocations = [
+        ...new Set(response.data.map((job) => job.location)),
+      ];
+
+      onLocationChange(uniqueLocations);
       setError(null);
     } catch (err) {
-      setError("Failed to load jobs. Please try again later.");
+      setError("Failed to load jobs.");
       console.error(err);
     } finally {
       setLoading(false);
