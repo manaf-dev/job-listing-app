@@ -9,7 +9,6 @@ from .schemas import JobCreate, JobResponse
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
-
 @router.post("/", status_code=201, response_model=Job)
 def create_job(job: JobCreate, session: Session = Depends(get_session)):
     db_job = Job.model_validate(job)
@@ -47,3 +46,10 @@ def get_job_by_id(job_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Job not found")
 
     return job
+
+
+@router.delete("/{job_id}")
+def delete_job_by_id(job_id: int, session: Session = Depends(get_session)):
+    job = get_job_by_id(job_id, session=session)
+    session.delete(job)
+    session.commit()

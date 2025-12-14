@@ -1,6 +1,8 @@
 from decouple import config
 from sqlmodel import Session, SQLModel, create_engine
 
+from .config import get_logger as logger
+
 DB_URL = config("DB_URL", "sqlite:///jobs.db")
 engine = create_engine(DB_URL, echo=False)
 
@@ -11,4 +13,6 @@ def init_db():
 
 def get_session():
     with Session(engine) as session:
+        logger.info("Creating session")
         yield session
+        logger.info("Closing session")
