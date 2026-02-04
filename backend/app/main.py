@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_logger
 from .db import init_db
-from .routes import router
+from .routes import auth_router, router
 
 logger = get_logger(__name__)
 
@@ -19,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(auth_router)
 
 
 @app.on_event("startup")
