@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import CreateJobPage from "./pages/CreateJobPage";
 import JobSuccessPage from "./pages/JobSuccessPage";
 import JobDetail from "./pages/JobDetail";
+import EmployerAuthPage from "./pages/EmployerAuthPage";
 
 function App() {
   const [newJob, setNewJob] = useState(null);
@@ -20,6 +21,7 @@ function App() {
         />
         <Route path="/success" element={<JobSuccessPage job={newJob} />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
+        <Route path="/employer/login" element={<EmployerAuthPage />} />
       </Routes>
     </Router>
   );

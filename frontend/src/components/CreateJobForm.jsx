@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../api/client";
+import { api, authHeader } from "../api/client";
 
 function CreateJobForm({ onJobCreated }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     company: "",
+    location: "",
     description: "",
   });
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,9 @@ function CreateJobForm({ onJobCreated }) {
     setLoading(true);
 
     try {
-      const response = await api.post("/jobs/", formData);
+      const response = await api.post("/jobs/", formData, {
+        headers: authHeader(),
+      });
       onJobCreated(response.data);
       navigate("/success");
     } catch (err) {
