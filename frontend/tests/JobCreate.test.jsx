@@ -1,13 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { test, expect, vi } from "vitest";
+import { afterEach, test, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import CreateJobPage from "../src/pages/CreateJobPage";
-import { api } from "../src/api/client";
+import { api, setAuthToken } from "../src/api/client";
 
 test("submit button behavior", async () => {
   vi.spyOn(api, "post").mockResolvedValue({ data: { id: 1, title: "Dev" } });
   const user = userEvent.setup();
+  setAuthToken("test-token");
 
   render(
     <MemoryRouter>
@@ -29,4 +30,8 @@ test("submit button behavior", async () => {
   );
 
   expect(btn).toBeEnabled();
+});
+
+afterEach(() => {
+  setAuthToken(null);
 });
